@@ -1,0 +1,7 @@
+.vagrant/
+logs/
+*.log
+*.bak
+*.backup
+*.retry
+.terraform/
