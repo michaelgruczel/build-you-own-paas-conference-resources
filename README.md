@@ -1,6 +1,17 @@
 # build-you-own-paas-conference-resources
 resources and examples as appendis to the conference talk about builing your own PAAS
 
+## vagrant 
+
+Vagrant provides the same, easy workflow regardless of your role as a developer, operator, or designer. It leverages a declarative configuration file which describes all your software requirements, packages, operating system configuration, users, and more.
+
+Development Environments 
+Production Parity
+
+    $ vagrant up
+    $ vagrant ssh
+    $ cd /vagrant
+
 ## Terraform
 
 install Terraform:
@@ -28,6 +39,12 @@ provider "aws" {
   access_key = "${var.aws_access_key}"
   secret_key = "${var.aws_secret_key}"
   region     = "us-west-1"
+  key_name   = "silpion-test-key"
+}
+
+resource "aws_key_pair" "silpion-test-key" {
+  key_name   = "silpion-test-key"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCpSfLu8STO5EiIyGzQkd1ahg8nlhYA0+D7xrZWryWDZBjHRFIsrYjy/HP7TyEePAxauP9IwvkFcTnBrGxg+oMzaDNJn8wuBu8/wtg4pI5w83+jNKdt6DOXlU2xfCkAGyMqV7n0cjQ/HlKw5xJdLSve1Y2TdPdxl5hFowpUCDPIpTLJM+7JlHdODAe9On6Xbs4SyGi0fHpJr2WA+xGxrM7GaSz+cCg6Bvb5vxF2yPxqebTp07USIttVPFT9N6dRhR9Ad5rVMIAuRcELuOpIyxJVodQNVE0McuIVTGy9JpIMikTie+rNFDWfEDwrALp41CO7HxuBd9XuKr+WknhzoIXn vagrant@precise64"
 }
 
 resource "aws_instance" "firsthost" {
@@ -98,7 +115,6 @@ resource "aws_eip" "ip" {
 
 </PRE>	
 
-
     $ cd terraform-second-example
     $ export AWS_ACCESS_KEY_ID="accesskey"
     $ export AWS_SECRET_ACCESS_KEY="secretkey"
@@ -167,5 +183,42 @@ resource "vsphere_virtual_machine" "web" {
 
 </PRE>	
 
-...more coming soon...
+## Ansible
 
+TODO
+
+Let us install docker on the created VM on AWS.
+First change ip in inventory file accordingly to the created vm, then execute:
+
+    $ cd /vagrant/ansible-first-example
+    $ ansible-playbook ....
+
+TODO 
+
+## Zookeeper, Mesos, Marathon
+
+ZooKeeper is a centralized service for maintaining configuration information, naming, providing distributed synchronization, and providing group services.
+
+Mesos runs on every machine and provides applications with API’s for
+resource management and scheduling across entire datacenter and cloud environments.
+
+Marathon is a production-grade container orchestration platform for Mesos.
+Multiple container runtimes. Marathon has first-class support for both Mesos containers (using cgroups) and Docker.
+
+Lets's take a look in a local installation.
+If you created the vagrant vm then you should be able to open. 
+
+    $ http://127.0.0.1:5050
+    $ http://127.0.0.1:8080
+
+Ok, let's install it on on AWS
+Let us install a single node mesos cluster on the created VM on AWS where we already added docker via ansible.
+
+    $ cd /vagrant/mesos-first-example
+    $ ansible-playbook ....
+
+more examples under:
+
+* https://medium.com/@gargar454/deploy-a-mesos-cluster-with-7-commands-using-docker-57951e020586
+* https://github.com/mesosphere/docker-containers/tree/master/mesos
+* https://mesosphere.github.io/marathon/docs/application-basics.html
