@@ -1,0 +1,58 @@
+--- 
+
+- name: Get uname
+  command: uname -r
+  register: os_uname
+
+- name: install linux-image-extra-{{os_uname.stdout}}
+  apt:
+    name: linux-image-extra-{{os_uname.stdout}}
+    state: present
+    update_cache: yes
+
+- name: install linux-image-extra-virtual
+  apt:
+    name: linux-image-extra-virtual
+    state: present
+
+- name: install apt-transport-https
+  apt:
+    name: apt-transport-https
+    state: present
+
+- name: install ca-certificates
+  apt:
+    name: ca-certificates
+    state: present
+
+- name: install curl
+  apt:
+    name: curl
+    state: present
+
+- name: install software-properties-common
+  apt:
+    name: software-properties-common
+    state: present
+
+- name: add apt-key
+  shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+- name: Get lsb_release
+  command: lsb_release -cs
+  register: lsb_release
+
+- name: add-apt-repository
+  shell: 'sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{lsb_release.stdout}} stable"'
+
+- name: install docker
+  apt:
+    name: docker-ce
+    state: present
+    update_cache: yes
+
+- name: add ubuntu user to docker group
+  shell: 'sudo gpasswd -a {{ansible_user}} docker'
+
+- name: refresh docker group
+  shell: newgrp docker 

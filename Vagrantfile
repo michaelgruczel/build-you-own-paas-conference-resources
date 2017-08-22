@@ -65,6 +65,11 @@ Vagrant.configure("2") do |config|
   # View the documentation for the provider you are using for more
   # information on available options.
 
+
+  config.vm.provider :virtualbox do |vb|
+    vb.customize ["modifyvm", :id, "--memory", 4096, "--cpus", 2]
+  end
+
   # Define a Vagrant Push strategy for pushing to Atlas. Other push strategies
   # such as FTP and Heroku are also available. See the documentation at
   # https://docs.vagrantup.com/v2/push/atlas.html for more information.
@@ -86,24 +91,6 @@ Vagrant.configure("2") do |config|
      sudo apt-add-repository ppa:ansible/ansible
      sudo apt-get update 
      sudo apt-get install -y ansible
-     echo "install docker"
-     sudo apt-get install -y linux-image-extra-$(uname -r) linux-image-extra-virtual
-     sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
-     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -    
-     sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-     sudo apt-get update
-     sudo apt-get install -y docker-ce
-     sudo gpasswd -a ubuntu docker 
-     newgrp docker
-     echo "start local mesos sample" 
-     echo "zookeeper"
-     docker run -d -p 2181:2181 -p 2888:2888 -p 3888:3888 --name zookeeper zookeeper:3.4
-     echo "master"
-     docker run -d -p 5050:5050 --network=host -e MESOS_PORT=5050 -e MESOS_ZK=zk://127.0.0.1:2181/mesos -e MESOS_QUORUM=1 -e MESOS_REGISTRY=in_memory -e MESOS_LOG_DIR=/var/log/mesos -e MESOS_WORK_DIR=/var/tmp/mesos -v "$(pwd)/log/mesos:/var/log/mesos" -v "$(pwd)/tmp/mesos:/var/tmp/mesos" mesosphere/mesos-master:1.2.1
-     echo "slave"
-     docker run -d -p 5051:5051 --network=host --privileged -e MESOS_PORT=5051 -e MESOS_MASTER=zk://127.0.0.1:2181/mesos -e MESOS_SWITCH_USER=0 -e MESOS_CONTAINERIZERS=docker,mesos -e MESOS_LOG_DIR=/var/log/mesos -e MESOS_WORK_DIR=/var/tmp/mesos -v "$(pwd)/log/mesos:/var/log/mesos" -v "$(pwd)/tmp/mesos:/var/tmp/mesos" -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):/usr/local/bin/docker mesosphere/mesos-slave:1.2.1
-     echo "marathon"
-     docker run -d -p 8080:8080 --network=host -e MARATHON_MASTER=zk://127.0.0.1:2181/mesos -e MESOS_ZK=zk://zookeeper:2181/marathon mesosphere/marathon:v1.4.5
-
+     echo ubuntu:ubuntu | sudo /usr/sbin/chpasswd
   SHELL
 end

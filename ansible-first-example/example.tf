@@ -1,11 +1,18 @@
+provider "aws" {
+  access_key = "${var.aws_access_key}"
+  secret_key = "${var.aws_secret_key}"
+  region     = "eu-west-1"
+}
+
 resource "aws_instance" "firsthost" {
   ami           = "ami-785db401"
-  instance_type = "t2.micro"
+  instance_type = "m4.xlarge"
   key_name   = "silpion-test-key"
-
+  
   provisioner "local-exec" {
     command = "echo ${aws_instance.firsthost.public_ip} > ip_address.txt"
   }
+
 }
 
 resource "aws_key_pair" "silpion-test-key" {

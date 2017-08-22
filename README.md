@@ -3,16 +3,24 @@ resources and examples as appendis to the conference talk about builing your own
 
 ## vagrant 
 
-Vagrant provides the same, easy workflow regardless of your role as a developer, operator, or designer. It leverages a declarative configuration file which describes all your software requirements, packages, operating system configuration, users, and more.
+Vagrant provides a declarative configuration file which describes all your software requirements, packages, operating system configuration, users, and more. Using a provider like virtal box you can automate creation and orchestration of vms. This is useful in order to create reproducable development environments which are as equal as possible to the production system.
 
-Development Environments 
-Production Parity
+Install vagrant and virtual box and execute:
 
     $ vagrant up
     $ vagrant ssh
     $ cd /vagrant
 
+on windows you need maybe a tools like putty (user ubuntu, password vagrant, port 2222) to ssh into the vm or a unix like shell like cygwin or gitbash.
+
+
 ## Terraform
+
+Terraform is used to create, manage, and manipulate infrastructure resources. Examples of resources include physical machines, VMs, network switches, containers, etc. Almost any infrastructure noun can be represented as a resource in Terraform.
+
+Terraform is agnostic to the underlying platforms by supporting providers. A provider is responsible for understanding API interactions and exposing resources. Providers generally are an IaaS (e.g. AWS, GCP, Microsoft Azure, OpenStack), PaaS (e.g. Heroku), or SaaS services (e.g. Terraform Enterprise, DNSimple, CloudFlare).
+
+Terraform builds a graph of resources. This tells Terraform not only in what order to create resources, but also what resources can be created in parallel. In our example, since the IP address depended on the EC2 instance, they could not be created in parallel.
 
 install Terraform:
 * Download archieve from https://www.terraform.io/downloads.html
@@ -22,12 +30,6 @@ install Terraform:
 test it:
 
     $ terraform --version
-
-Terraform is used to create, manage, and manipulate infrastructure resources. Examples of resources include physical machines, VMs, network switches, containers, etc. Almost any infrastructure noun can be represented as a resource in Terraform.
-
-Terraform is agnostic to the underlying platforms by supporting providers. A provider is responsible for understanding API interactions and exposing resources. Providers generally are an IaaS (e.g. AWS, GCP, Microsoft Azure, OpenStack), PaaS (e.g. Heroku), or SaaS services (e.g. Terraform Enterprise, DNSimple, CloudFlare).
-
-Terraform builds a graph of resources. This tells Terraform not only in what order to create resources, but also what resources can be created in parallel. In our example, since the IP address depended on the EC2 instance, they could not be created in parallel.
 
 Example AWS
 
@@ -44,11 +46,11 @@ provider "aws" {
 
 resource "aws_key_pair" "silpion-test-key" {
   key_name   = "silpion-test-key"
-  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCpSfLu8STO5EiIyGzQkd1ahg8nlhYA0+D7xrZWryWDZBjHRFIsrYjy/HP7TyEePAxauP9IwvkFcTnBrGxg+oMzaDNJn8wuBu8/wtg4pI5w83+jNKdt6DOXlU2xfCkAGyMqV7n0cjQ/HlKw5xJdLSve1Y2TdPdxl5hFowpUCDPIpTLJM+7JlHdODAe9On6Xbs4SyGi0fHpJr2WA+xGxrM7GaSz+cCg6Bvb5vxF2yPxqebTp07USIttVPFT9N6dRhR9Ad5rVMIAuRcELuOpIyxJVodQNVE0McuIVTGy9JpIMikTie+rNFDWfEDwrALp41CO7HxuBd9XuKr+WknhzoIXn vagrant@precise64"
+  public_key = "ssh-rsa....."
 }
 
 resource "aws_instance" "firsthost" {
-  ami           = "ami-1446b66d"
+  ami           = "ami-785db401"
   instance_type = "t2.micro"
 
   provisioner "local-exec" {
@@ -62,12 +64,11 @@ resource "aws_eip" "ip" {
 
 </PRE>	
 
-let's create an ec2 instance it:
+let's create an EC2 instance on aws:
 
     $ cd terraform-first-example
-    $ export AWS_ACCESS_KEY_ID="accesskey"
-    $ export AWS_SECRET_ACCESS_KEY="secretkey"
-    $ export AWS_DEFAULT_REGION="eu-west-1"
+    $ export AWS_ACCESS_KEY_ID="an accesskey"
+    $ export AWS_SECRET_ACCESS_KEY="a secretkey"
     $ terraform init
     $ terraform plan
     # terraform plan shows what changes Terraform will apply to your infrastructure
@@ -101,7 +102,7 @@ In ./modules/example-module" I have added the known definition:
 <PRE>	
 
 resource "aws_instance" "firsthost" {
-  ami           = "ami-1446b66d"
+  ami           = "ami-785db401"
   instance_type = "t2.micro"
 
   provisioner "local-exec" {
@@ -116,9 +117,8 @@ resource "aws_eip" "ip" {
 </PRE>	
 
     $ cd terraform-second-example
-    $ export AWS_ACCESS_KEY_ID="accesskey"
-    $ export AWS_SECRET_ACCESS_KEY="secretkey"
-    $ export AWS_DEFAULT_REGION="eu-west-1"
+    $ export AWS_ACCESS_KEY_ID="an accesskey"
+    $ export AWS_SECRET_ACCESS_KEY="a secretkey"
     $ terraform init
     # download modules if needed
     $ terraform get
@@ -191,7 +191,13 @@ Let us install docker on the created VM on AWS.
 First change ip in inventory file accordingly to the created vm, then execute:
 
     $ cd /vagrant/ansible-first-example
-    $ ansible-playbook ....
+    $ export ANSIBLE_HOST_KEY_CHECKING=False
+    $ ansible-playbook -i inventory-local install-docker.yml
+
+
+cd /vagrant
+export ANSIBLE_HOST_KEY_CHECKING=False
+export ANSIBLE_FORCE_COLOR=true
 
 TODO 
 

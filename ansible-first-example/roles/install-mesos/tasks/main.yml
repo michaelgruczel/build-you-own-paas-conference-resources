@@ -1,0 +1,98 @@
+--- 
+
+- name: stop all docker containers
+  command: "docker stop $(docker ps -a -q)"
+  ignore_errors: yes
+
+- name: remove all docker containers
+  command: "docker rm $(docker ps -a -q)"
+  ignore_errors: yes
+
+- name: start zookeeper
+  shell: docker run -d -p 2181:2181 -p 2888:2888 -p 3888:3888 --name zookeeper zookeeper:3.4
+
+- name: start mesos master
+  shell: docker run -d -p 5050:5050 --network=host -e MESOS_PORT=5050 -e MESOS_ZK=zk://127.0.0.1:2181/mesos -e MESOS_QUORUM=1 -e MESOS_REGISTRY=in_memory -e MESOS_LOG_DIR=/var/log/mesos -e MESOS_WORK_DIR=/var/tmp/mesos -v "$(pwd)/log/mesos:/var/log/mesos" -v "$(pwd)/tmp/mesos:/var/tmp/mesos" mesosphere/mesos-master:1.2.1
+
+- name: start mesos slave
+  shell: docker run -d -p 5051:5051 --network=host --privileged -e MESOS_PORT=5051 -e MESOS_MASTER=zk://127.0.0.1:2181/mesos -e MESOS_SWITCH_USER=0 -e MESOS_CONTAINERIZERS=docker,mesos -e MESOS_LOG_DIR=/var/log/mesos -e MESOS_WORK_DIR=/var/tmp/mesos -v "$(pwd)/log/mesos:/var/log/mesos" -v "$(pwd)/tmp/mesos:/var/tmp/mesos" -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):/usr/local/bin/docker mesosphere/mesos-slave:1.2.1
+
+- name: start marathon
+  shell: docker run -d -p 8080:8080 --network=host -e MARATHON_MASTER=zk://127.0.0.1:2181/mesos -e MESOS_ZK=zk://zookeeper:2181/marathon mesosphere/marathon:v1.4.5
+
+#docker run -d -p 2181:2181 -p 2888:2888 -p 3888:3888 --name zookeeper zookeeper:3.4
+#docker run -d -p 5050:5050 --network=host -e MESOS_PORT=5050 -e MESOS_ZK=zk://127.0.0.1:2181/mesos -e MESOS_QUORUM=1 -e MESOS_REGISTRY=in_memory -e MESOS_LOG_DIR=/var/log/mesos -e MESOS_WORK_DIR=/var/tmp/mesos -v "$(pwd)/log/mesos:/var/log/mesos" -v "$(pwd)/tmp/mesos:/var/tmp/mesos" mesosphere/mesos-master:1.2.1
+#docker run -d -p 5051:5051 --network=host --privileged -e MESOS_PORT=5051 -e MESOS_MASTER=zk://127.0.0.1:2181/mesos -e MESOS_SWITCH_USER=0 -e MESOS_CONTAINERIZERS=docker,mesos -e MESOS_LOG_DIR=/var/log/mesos -e MESOS_WORK_DIR=/var/tmp/mesos -v "$(pwd)/log/mesos:/var/log/mesos" -v "$(pwd)/tmp/mesos:/var/tmp/mesos" -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):/usr/local/bin/docker mesosphere/mesos-slave:1.2.1
+#docker run -d -p 8080:8080 --network=host -e MARATHON_MASTER=zk://127.0.0.1:2181/mesos -e MESOS_ZK=zk://zookeeper:2181/marathon mesosphere/marathon:v1.4.5
+
+
+#- name: Get local folder
+#  command: pwd
+#  register: local_folder
+
+#- name: Get docker path folder
+#  command: which docker
+#  register: docker_path
+
+#- name: Start zookeeper
+#  docker_container:
+#    name: zookeeper
+#    image: zookeeper:3.4
+#    ports:
+#     - "2181:2181"
+#     - "2888:2888"
+#     - "3888:3888"
+
+#- name: Start mesos master
+#  docker_container:
+#    name: mesos-master
+#    image: mesosphere/mesos-master:1.2.1
+#    ports:
+#     - "5050:5050"
+#    networks:
+#      - name: host
+#    env:
+#        MESOS_PORT: 5050
+#        MESOS_ZK: "zk://127.0.0.1:2181/mesos" 
+#        MESOS_QUORUM: 1
+#        MESOS_REGISTRY: "in_memory"
+#        MESOS_LOG_DIR: "/var/log/mesos"
+#        MESOS_WORK_DIR: "/var/tmp/mesos"
+#    volumes:
+#        - "{{ local_folder }}/log/mesos:/var/log/mesos"
+#        - "{{ local_folder }}/tmp/mesos:/var/tmp/mesos"
+
+#- name: Start one mesos slave
+#  docker_container:
+#    name: mesos-slave
+#    image: mesosphere/mesos-slave:1.2.1
+#    ports:
+#     - "5051:5051"
+#    networks:
+#      - name: host
+#    privileged: yes  
+#    env:
+#        MESOS_PORT: 5051
+#        MESOS_MASTER: "zk://127.0.0.1:2181/mesos"
+#        MESOS_SWITCH_USER: 0
+#        MESOS_CONTAINERIZERS: "docker,mesos"
+#        MESOS_LOG_DIR: "/var/log/mesos"
+#        MESOS_WORK_DIR: "/var/tmp/mesos"
+#    volumes:
+#        - "{{ pwd }}/log/mesos:/var/log/mesos"
+#        - "{{ pwd }}/tmp/mesos:/var/tmp/mesos"
+#        - "/var/run/docker.sock:/var/run/docker.sock"
+#        - "{{ docker_path }}:/usr/local/bin/docker"
+
+#- name: Start marathon
+#  docker_container:
+#    name: marathon
+#    image: mesosphere/marathon:v1.4.5
+#    ports:
+#     - "8080:8080"
+#    networks:
+#      - name: host
+#    env:
+#        MARATHON_MASTER: zk://127.0.0.1:2181/mesos
+#        MESOS_ZK: zk://zookeeper:2181/marathon    
+

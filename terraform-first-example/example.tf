@@ -5,7 +5,7 @@ provider "aws" {
 }
 
 resource "aws_instance" "firsthost" {
-  ami           = "ami-1446b66d"
+  ami           = "ami-785db401"
   instance_type = "t2.micro"
   key_name   = "silpion-test-key"
   
