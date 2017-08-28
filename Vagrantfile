@@ -91,6 +91,11 @@ Vagrant.configure("2") do |config|
      sudo apt-add-repository ppa:ansible/ansible
      sudo apt-get update 
      sudo apt-get install -y ansible
+     # set password ubuntu
      echo ubuntu:ubuntu | sudo /usr/sbin/chpasswd
+     #copy key for tests
+     cp /vagrant/silpion-test-key.pem /home/ubuntu/
+     cp /vagrant/silpion-test-key.pub /home/ubuntu/
+     chmod 400 /home/ubuntu/silpion-test-key.pem
   SHELL
 end

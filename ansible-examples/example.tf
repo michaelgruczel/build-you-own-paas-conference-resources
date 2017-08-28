@@ -5,10 +5,10 @@ provider "aws" {
 }
 
 resource "aws_instance" "firsthost" {
-  ami           = "ami-061b1560"
-  instance_type = "m4.large"
+  ami           = "ami-785db401"
+  instance_type = "m4.xlarge"
   key_name   = "silpion-test-key"
-  security_groups = [
+    security_groups = [
         "allow_all_in"
     ]
 }

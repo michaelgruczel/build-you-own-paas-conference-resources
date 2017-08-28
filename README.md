@@ -22,30 +22,31 @@ Terraform is agnostic to the underlying platforms by supporting providers. A pro
 
 Terraform builds a graph of resources. This tells Terraform not only in what order to create resources, but also what resources can be created in parallel. In our example, since the IP address depended on the EC2 instance, they could not be created in parallel.
 
-install Terraform:
-* Download archieve from https://www.terraform.io/downloads.html
-* unzip it
-* put the terraform binary in PATH
-
-test it:
+There are 2 options to test it. You can install it or you use this vagrant box to play with it:
 
     $ terraform --version
 
-Example AWS
+In case you want to use it from commandline on you pc and not from withing the vagrant box:
+
+* Download archive from https://www.terraform.io/downloads.html
+* unzip it
+* put the terraform binary in PATH
+
+How does an infrastructure definition for AWS looks like ?
 
 example.tf:
 
 <PRE>
 
 provider "aws" {
-  access_key = "${var.aws_access_key}"
-  secret_key = "${var.aws_secret_key}"
+  access_key = "xxx"
+  secret_key = "xxx"
   region     = "us-west-1"
-  key_name   = "silpion-test-key"
+  key_name   = "a-test-key"
 }
 
 resource "aws_key_pair" "silpion-test-key" {
-  key_name   = "silpion-test-key"
+  key_name   = "a-test-key"
   public_key = "ssh-rsa....."
 }
 
@@ -67,8 +68,7 @@ resource "aws_eip" "ip" {
 let's create an EC2 instance on aws:
 
     $ cd terraform-first-example
-    $ export AWS_ACCESS_KEY_ID="an accesskey"
-    $ export AWS_SECRET_ACCESS_KEY="a secretkey"
+    # set keys in example.tf
     $ terraform init
     $ terraform plan
     # terraform plan shows what changes Terraform will apply to your infrastructure
@@ -80,34 +80,50 @@ let's destroy it:
     $ terraform plan -destroy
     $ terraform destroy
 
-let us move some code into a module.
-Modules in Terraform are self-contained packages of Terraform configurations that are managed as a group. Modules are used to create reusable components, improve organization, and to treat pieces of infrastructure as a black box.
+let us move some more logic in it.
 
 <PRE>
 
 provider "aws" {
-  access_key = "${var.aws_access_key}"
-  secret_key = "${var.aws_secret_key}"
-  region     = "us-west-1"
+  access_key = "xxx"
+  secret_key = "xxx"
+  region     = "eu-west-1"
 }
-
-module "example-module" {
-  source = "./modules/example-module"
-}
-
-</PRE>	
-
-In ./modules/example-module" I have added the known definition:
-
-<PRE>	
 
 resource "aws_instance" "firsthost" {
-  ami           = "ami-785db401"
-  instance_type = "t2.micro"
+  ami           = "ami-061b1560"
+  instance_type = "m4.large"
+  key_name   = "silpion-test-key"
+  security_groups = [
+        "allow_all_in"
+    ]
+}
 
-  provisioner "local-exec" {
-    command = "echo ${aws_instance.firsthost.public_ip} > ip_address.txt"
+resource "aws_key_pair" "silpion-test-key" {
+  key_name   = "silpion-test-key"
+  public_key = "ssh-rsa ..."
+}
+
+resource "aws_security_group" "allow_all_in" {
+  name        = "allow_all_in"
+  description = "Allow all inbound traffic"
+
+  ingress {
+    protocol  = "tcp"
+    self      = true
+    from_port = 0
+    to_port = 65535
+    cidr_blocks = ["0.0.0.0/0"]
   }
+
+  egress {
+    protocol  = "tcp"
+    self      = true
+    from_port = 0
+    to_port = 65535
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
 }
 
 resource "aws_eip" "ip" {
@@ -116,17 +132,15 @@ resource "aws_eip" "ip" {
 
 </PRE>	
 
-    $ cd terraform-second-example
-    $ export AWS_ACCESS_KEY_ID="an accesskey"
-    $ export AWS_SECRET_ACCESS_KEY="a secretkey"
+    $ cd ./../terraform-second-example
+    # set keys in example.tf
     $ terraform init
-    # download modules if needed
-    $ terraform get
     $ terraform plan
     # terraform plan shows what changes Terraform will apply to your infrastructure
     $ terraform apply
     $ terraform show
     $ terraform graph
+    $ terraform destroy
 
 more information here https://www.terraform.io/docs/modules/index.html.
 More examples https://github.com/terraform-providers/terraform-provider-aws.git
@@ -185,21 +199,23 @@ resource "vsphere_virtual_machine" "web" {
 
 ## Ansible
 
-TODO
+Let us use ansible to install docker in our local VM.
 
-Let us install docker on the created VM on AWS.
-First change ip in inventory file accordingly to the created vm, then execute:
-
-    $ cd /vagrant/ansible-first-example
+    $ cd ./../ansible-examples
     $ export ANSIBLE_HOST_KEY_CHECKING=False
+    $ export ANSIBLE_FORCE_COLOR=true
     $ ansible-playbook -i inventory-local install-docker.yml
 
+Let us now install docker on a created VM on AWS. You have to subscripe to the centos package to use this script (executing the script wilol give you the link to the subsription).
+First change ip in inventory file (inventory-aws) accordingly to the created vm, then execute:
 
-cd /vagrant
-export ANSIBLE_HOST_KEY_CHECKING=False
-export ANSIBLE_FORCE_COLOR=true
-
-TODO 
+    # set keys in example.tf
+    $ terraform init
+    $ terraform apply
+    $ export ANSIBLE_HOST_KEY_CHECKING=False
+    $ export ANSIBLE_FORCE_COLOR=true
+    # set ip in inventory-aws
+    $ ansible-playbook -i inventory-aws install-docker.yml
 
 ## Zookeeper, Mesos, Marathon
 
@@ -223,8 +239,16 @@ Let us install a single node mesos cluster on the created VM on AWS where we alr
     $ cd /vagrant/mesos-first-example
     $ ansible-playbook ....
 
+ok, the tutorial stops here, take sure that you deletd everything
+
+    $ terraform destroy
+
 more examples under:
 
 * https://medium.com/@gargar454/deploy-a-mesos-cluster-with-7-commands-using-docker-57951e020586
 * https://github.com/mesosphere/docker-containers/tree/master/mesos
 * https://mesosphere.github.io/marathon/docs/application-basics.html
+
+
+
+
