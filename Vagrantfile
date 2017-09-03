@@ -35,6 +35,14 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 2888, host: 2888, host_ip: "127.0.0.1"
   config.vm.network "forwarded_port", guest: 3888, host: 3888, host_ip: "127.0.0.1"
 
+  for i in 10000..11000
+    config.vm.network :forwarded_port, guest: i, host: i
+  end
+
+  for i in 30000..35000
+    config.vm.network :forwarded_port, guest: i, host: i
+  end
+
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
   # config.vm.network "private_network", ip: "192.168.33.10"
@@ -97,5 +105,7 @@ Vagrant.configure("2") do |config|
      cp /vagrant/silpion-test-key.pem /home/ubuntu/
      cp /vagrant/silpion-test-key.pub /home/ubuntu/
      chmod 400 /home/ubuntu/silpion-test-key.pem
+     sudo chown ubuntu /home/ubuntu/silpion-test-key.pem
+     sudo chown ubuntu /home/ubuntu/silpion-test-key.pub
   SHELL
 end

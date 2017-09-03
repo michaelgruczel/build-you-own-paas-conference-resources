@@ -9,6 +9,7 @@
     name: linux-image-extra-{{os_uname.stdout}}
     state: present
     update_cache: yes
+  ignore_errors: yes
 
 - name: install linux-image-extra-virtual
   apt:

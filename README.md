@@ -228,20 +228,24 @@ Marathon is a production-grade container orchestration platform for Mesos.
 Multiple container runtimes. Marathon has first-class support for both Mesos containers (using cgroups) and Docker.
 
 Lets's take a look in a local installation.
-If you created the vagrant vm then you should be able to open. 
 
-    $ http://127.0.0.1:5050
-    $ http://127.0.0.1:8080
+    $ newgrp docker
+    $ ansible-playbook -i inventory-local install-mesos.yml
+    # http://127.0.0.1:5050
+    # http://127.0.0.1:8080
 
 Ok, let's install it on on AWS
 Let us install a single node mesos cluster on the created VM on AWS where we already added docker via ansible.
 
-    $ cd /vagrant/mesos-first-example
-    $ ansible-playbook ....
+    $ ansible-playbook -i inventory-aws install-mesos.yml
 
-ok, the tutorial stops here, take sure that you deletd everything
+you could now distribute an app via mesos using marathon e.g. tutum/hello-world
+
+ok, the tutorial for a basic setup of mesos via terraform, docker and ansible stops here
 
     $ terraform destroy
+
+take sure that you deleted everything before we going on to take a look into pipelines.
 
 more examples under:
 
