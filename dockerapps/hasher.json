@@ -1,0 +1,20 @@
+{
+    "id": "hasher",
+    "container": {
+        "docker": {
+            "image": "nexus.msdomain.com:14000/hasher",
+            "network": "BRIDGE",
+            "portMappings": [{
+                "containerPort": 80,
+                "hostPort": 0,
+                "protocol": "tcp"
+            }]
+        }
+    },
+    "uris":  [
+      "file:///etc/docker.tar.gz"
+        ],
+    "cpus": 0.1,
+    "mem": 32,
+    "instances": 1
+}
