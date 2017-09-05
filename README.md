@@ -253,6 +253,3 @@ more examples under:
 * https://github.com/mesosphere/docker-containers/tree/master/mesos
 * https://mesosphere.github.io/marathon/docs/application-basics.html
 
-
-
-

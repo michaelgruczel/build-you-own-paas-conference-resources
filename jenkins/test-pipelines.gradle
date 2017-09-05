@@ -1,0 +1,280 @@
+//usage: $ gradlew -b test-pipelines.gradle  updateJenkinsItems
+
+apply plugin: 'com.terrafolio.jenkins'
+
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        maven {
+            url "http://repo.jenkins-ci.org/releases/"
+        }
+    }
+    dependencies {
+        classpath('com.terrafolio:gradle-jenkins-plugin:1.3.3')
+    }
+}
+
+project.ext {
+    projectName = 'TEST'
+    useGradleStep = project.hasProperty('useGradleStep') && ['on', 'true'].contains(project.properties.useGradleStep)
+    defaultReceipients = ''
+    defaultSubject = ''
+    defaultContent = ''
+}
+
+jenkins {
+    servers {
+        example {
+            url "http://ec2-54-173-3-124.compute-1.amazonaws.com:8080"
+            username "admin"
+        }
+    }
+
+    defaultServer servers.example
+    
+    jobs {
+
+        buildrng {
+            dsl {
+                setName "BUILD_RNG"
+                description "job to build rng app"
+                scm {
+                    git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
+                }
+                triggers {
+                    scm '*/5 * * * *'
+                }
+                steps {
+                    shell('cd dockerapps/rng && docker build -t rng . && docker tag rng nexus.mydomain.com:14000/rng && docker push nexus.mydomain.com:14000/rng || true')
+
+                }
+                logRotator(7, 49) // daysToKeep, numBuildsToKeep
+                publishers {
+                    // use build-pipeline-plugin
+                    // https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin
+                    downstream('DEPLOY_RNG', 'SUCCESS')
+                }
+            }
+        }
+
+        deployrng {
+            dsl {
+                setName "DEPLOY_RNG"
+                description "job to deploy rng app"
+                scm {
+                    git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
+                }
+
+                steps {
+                    shell('cd dockerapps && curl -X POST http://ec2-54-242-162-129.compute-1.amazonaws.com:8080/v2/apps --data-binary @rng.json -H "Content-type: application/json"')
+                }
+                logRotator(7, 49) // daysToKeep, numBuildsToKeep
+            }
+        }
+
+        buildhasher {
+            dsl {
+                setName "BUILD_HASHER"
+                description "job to build docker hasher app"
+                scm {
+                    git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
+                }
+                triggers {
+                    scm '*/5 * * * *'
+                }
+                steps {
+                    shell('cd dockerapps/hasher && docker build -t hasher . && docker tag hasher nexus.mydomain.com:14000/hasher && docker push nexus.mydomain.com:14000/hasher || true')
+
+                }
+                logRotator(7, 49) // daysToKeep, numBuildsToKeep
+                publishers {
+                    // use build-pipeline-plugin
+                    // https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin
+                    downstream('DEPLOY_HASHER', 'SUCCESS')
+                }
+            }
+        }
+
+        deployhasher {
+            dsl {
+                setName "DEPLOY_HASHER"
+                description "job to deploy hasher app"
+                scm {
+                    git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
+                }
+
+                steps {
+                    shell('cd dockerapps && curl -X POST http://ec2-54-242-162-129.compute-1.amazonaws.com:8080/v2/apps --data-binary @hasher.json -H "Content-type: application/json"')
+                }
+                logRotator(7, 49) // daysToKeep, numBuildsToKeep
+            }
+        }
+
+        buildredis {
+            dsl {
+                setName "BUILD_REDIS"
+                description "job to build docker redis"
+                scm {
+                    git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
+                }
+                triggers {
+                    scm '*/5 * * * *'
+                }
+                steps {
+                    shell('docker pull redis && docker tag redis nexus.mydomain.com:14000/redis && docker push nexus.mydomain.com:14000/redis || true')
+
+                }
+                logRotator(7, 49) // daysToKeep, numBuildsToKeep
+                publishers {
+                    // use build-pipeline-plugin
+                    // https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin
+                    downstream('DEPLOY_REDIS', 'SUCCESS')
+                }
+            }
+        }
+
+        deployredis {
+            dsl {
+                setName "DEPLOY_REDIS"
+                description "job to deploy redis"
+                scm {
+                    git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
+                }
+
+                steps {
+                    shell('cd dockerapps && curl -X POST http://ec2-54-242-162-129.compute-1.amazonaws.com:8080/v2/apps --data-binary @redis.json -H "Content-type: application/json"')
+                }
+                logRotator(7, 49) // daysToKeep, numBuildsToKeep
+            }
+        }
+
+
+        buildworker {
+            dsl {
+                setName "BUILD_WORKER"
+                description "job to build worker app"
+                scm {
+                    git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
+                }
+                triggers {
+                    scm '*/5 * * * *'
+                }
+                steps {
+                    shell('cd dockerapps/worker && docker build -t worker . && docker tag worker nexus.mydomain.com:14000/worker && docker push nexus.mydomain.com:14000/worker || true')
+
+                }
+                logRotator(7, 49) // daysToKeep, numBuildsToKeep
+                publishers {
+                    // use build-pipeline-plugin
+                    // https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin
+                    downstream('DEPLOY_WORKER', 'SUCCESS')
+                }
+            }
+        }
+
+        deployworker {
+            dsl {
+                setName "DEPLOY_WORKER"
+                description "job to deploy worker app"
+                scm {
+                    git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
+                }
+
+                steps {
+                    shell('cd dockerapps && curl -X POST http://ec2-54-242-162-129.compute-1.amazonaws.com:8080/v2/apps --data-binary @worker.json -H "Content-type: application/json"')
+                }
+                logRotator(7, 49) // daysToKeep, numBuildsToKeep
+            }
+        }
+
+
+        buildwebui {
+            dsl {
+                setName "BUILD_WEBUI"
+                description "job to build docker webui app"
+                scm {
+                    git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
+                }
+                triggers {
+                    scm '*/5 * * * *'
+                }
+                steps {
+                    shell('cd dockerapps/webui && docker build -t webui . && docker tag webui nexus.mydomain.com:14000/webui && docker push nexus.mydomain.com:14000/webui || true')
+
+                }
+                logRotator(7, 49) // daysToKeep, numBuildsToKeep
+                publishers {
+                    // use build-pipeline-plugin
+                    // https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin
+                    downstream('DEPLOY_WEBUI', 'SUCCESS')
+                }
+            }
+        }
+
+        deploywebui {
+            dsl {
+                setName "DEPLOY_WEBUI"
+                description "job to deploy webui app"
+                scm {
+                    git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
+                }
+
+                steps {
+                    shell('cd dockerapps && curl -X POST http://ec2-54-242-162-129.compute-1.amazonaws.com:8080/v2/apps --data-binary @webui.json -H "Content-type: application/json"')
+                }
+                logRotator(7, 49) // daysToKeep, numBuildsToKeep
+            }
+        }
+
+        builddockercoin {
+            dsl {
+                setName "BUILD_DOCKERCOIN"
+                description "job to build docker coin app"
+                scm {
+                    git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
+                }
+                triggers {
+                    scm '*/5 * * * *'
+                }
+                steps {
+                    shell('cd dockerapps/rng && docker build -t hasher . && docker tag rng nexus.mydomain.com:14000/rng && docker push nexus.mydomain.com:14000/rng || true')
+                    shell('cd dockerapps/hasher && docker build -t hasher . && docker tag hasher nexus.mydomain.com:14000/hasher && docker push nexus.mydomain.com:14000/hasher || true')
+                    shell('docker pull redis && docker tag redis nexus.mydomain.com:14000/redis && docker push nexus.mydomain.com:14000/redis || true')
+                    shell('cd dockerapps/worker && docker build -t worker . && docker tag worker nexus.mydomain.com:14000/worker && docker push nexus.mydomain.com:14000/worker || true')
+                    shell('cd dockerapps/webui && docker build -t hasher . && docker tag webui nexus.mydomain.com:14000/webui && docker push nexus.mydomain.com:14000/webui || true')
+                }
+                logRotator(7, 49) // daysToKeep, numBuildsToKeep
+                publishers {
+                    // use build-pipeline-plugin
+                    // https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin
+                    downstream('DEPLOY_DOCKERCOIN', 'SUCCESS')
+                }
+            }
+        }
+
+        deploydockercoin {
+            dsl {
+                setName "DEPLOY_DOCKERCOIN"
+                description "job to deploy docker coin app"
+                scm {
+					git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
+				}
+
+                steps {
+                    shell('cd dockerapps && curl -X POST http://ec2-54-242-162-129.compute-1.amazonaws.com:8080/v2/apps --data-binary @rng.json -H "Content-type: application/json"')
+                    shell('cd dockerapps && curl -X POST http://ec2-54-242-162-129.compute-1.amazonaws.com:8080/v2/apps --data-binary @hasher.json -H "Content-type: application/json"')
+                    shell('cd dockerapps && curl -X POST http://ec2-54-242-162-129.compute-1.amazonaws.com:8080/v2/apps --data-binary @redis.json -H "Content-type: application/json"')
+                    shell('cd dockerapps && curl -X POST http://ec2-54-242-162-129.compute-1.amazonaws.com:8080/v2/apps --data-binary @worker.json -H "Content-type: application/json"')
+                    shell('cd dockerapps && curl -X POST http://ec2-54-242-162-129.compute-1.amazonaws.com:8080/v2/apps --data-binary @webui.json -H "Content-type: application/json"')
+                }                
+                logRotator(7, 49) // daysToKeep, numBuildsToKeep
+            }
+        }
+
+    }
+
+}

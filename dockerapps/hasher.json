@@ -2,7 +2,7 @@
     "id": "hasher",
     "container": {
         "docker": {
-            "image": "nexus.msdomain.com:14000/hasher",
+            "image": "nexus.mydomain.com:14000/hasher",
             "network": "BRIDGE",
             "portMappings": [{
                 "containerPort": 80,

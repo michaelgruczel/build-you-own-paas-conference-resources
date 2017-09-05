@@ -11,10 +11,10 @@
   },
     "container": {
         "docker": {
-            "image": "nexus.msdomain.com:14000/webui",
+            "image": "nexus.mydomain.com:14000/webui",
             "network": "BRIDGE",
             "parameters": [
-                {"key": "env", "value": "DOMAIN=msdomain.com"}
+                {"key": "env", "value": "DOMAIN=mydomain.com"}
                    ],
             "portMappings": [{
                 "containerPort": 80,

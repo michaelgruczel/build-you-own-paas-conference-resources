@@ -2,7 +2,7 @@
     "id": "rng",
     "container": {
         "docker": {
-            "image": "nexus.msdomain.com:14000/rng",
+            "image": "nexus.mydomain.com:14000/rng",
             "network": "BRIDGE",
             "portMappings": [{
                 "containerPort": 80,
