@@ -202,7 +202,7 @@ jenkins {
                     git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
                 }
                 steps {
-                    shell('docker pull postgresql && docker tag postgresql nexus.mydomain.com:14000/postgresql && docker push nexus.mydomain.com:14000/postgresql')
+                    shell('docker pull postgres && docker tag postgres nexus.mydomain.com:14000/postgresql && docker push nexus.mydomain.com:14000/postgresql')
                     shell('cd dockerapps && curl -X POST http://ec2-54-242-162-129.compute-1.amazonaws.com:8080/v2/apps --data-binary @postgresql.json -H "Content-type: application/json"')
                 }
                 logRotator(7, 49) // daysToKeep, numBuildsToKeep
@@ -222,7 +222,7 @@ jenkins {
                 }
                 steps {
                     shell('docker pull owncloud && docker tag owncloud nexus.mydomain.com:14000/owncloud')
-                    shell('docker pull postgres && docker tag postgresql nexus.mydomain.com:14000/postgresql')
+                    shell('docker pull postgres && docker tag postgres nexus.mydomain.com:14000/postgresql')
                 }
                 logRotator(7, 49) // daysToKeep, numBuildsToKeep
                 publishers {
