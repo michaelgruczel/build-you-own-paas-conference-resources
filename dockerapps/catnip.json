@@ -4,9 +4,9 @@
         "HAPROXY_0_MODE": "http",
         "HAPROXY_GROUP": "external",
         "SERVICE_NAME": "catnip",
-        "MARATHON_HOSTNAME": "webui",
+        "MARATHON_HOSTNAME": "catnip",
         "HAPROXY_0_PORT": "9002",
-        "SERVICE_TAGS": "webserver",
+        "SERVICE_TAGS": "catnip",
         "HAPROXY_0_VHOST": "catnip.testing"
   },
     "container": {
@@ -17,7 +17,7 @@
                 {"key": "env", "value": "DOMAIN=mydomain.com"}
                    ],
             "portMappings": [{
-                "containerPort": 80,
+                "containerPort": 5000,
                 "hostPort": 0,
                 "protocol": "tcp"
             }]
