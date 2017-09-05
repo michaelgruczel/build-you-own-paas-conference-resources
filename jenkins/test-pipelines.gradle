@@ -121,9 +121,6 @@ jenkins {
                 scm {
                     git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
                 }
-                triggers {
-                    scm '*/5 * * * *'
-                }
                 steps {
                     shell('cd dockerapps/rng && docker build -t rng . && docker tag rng nexus.mydomain.com:14000/rng')
                     shell('cd dockerapps/hasher && docker build -t hasher . && docker tag hasher nexus.mydomain.com:14000/hasher')
@@ -225,7 +222,7 @@ jenkins {
                 }
                 steps {
                     shell('docker pull owncloud && docker tag owncloud nexus.mydomain.com:14000/owncloud')
-                    shell('docker pull postgresql && docker tag postgresql nexus.mydomain.com:14000/postgresql')
+                    shell('docker pull postgres && docker tag postgresql nexus.mydomain.com:14000/postgresql')
                 }
                 logRotator(7, 49) // daysToKeep, numBuildsToKeep
                 publishers {
@@ -245,7 +242,7 @@ jenkins {
                 }
                 steps {
                     shell('docker push nexus.mydomain.com:14000/owncloud')
-                    shell('docker push nexus.mydomain.com:14000/postgresql')
+                    shell('docker push nexus.mydomain.com:14000/postgres')
                 } 
 
                 logRotator(7, 49) // daysToKeep, numBuildsToKeep
