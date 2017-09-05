@@ -45,9 +45,6 @@ jenkins {
                 scm {
                     git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
                 }
-                triggers {
-                    scm '*/5 * * * *'
-                }
                 steps {
                     shell('cd dockerapps/rng && docker build -t rng . && docker tag rng nexus.mydomain.com:14000/rng && docker push nexus.mydomain.com:14000/rng')
                     shell('cd dockerapps && curl -X POST http://ec2-54-242-162-129.compute-1.amazonaws.com:8080/v2/apps --data-binary @rng.json -H "Content-type: application/json"')
@@ -62,9 +59,6 @@ jenkins {
                 description "job to build docker hasher app"
                 scm {
                     git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
-                }
-                triggers {
-                    scm '*/5 * * * *'
                 }
                 steps {
                     shell('cd dockerapps/hasher && docker build -t hasher . && docker tag hasher nexus.mydomain.com:14000/hasher && docker push nexus.mydomain.com:14000/hasher')
@@ -81,9 +75,6 @@ jenkins {
                 scm {
                     git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
                 }
-                triggers {
-                    scm '*/5 * * * *'
-                }
                 steps {
                     shell('docker pull redis && docker tag redis nexus.mydomain.com:14000/redis && docker push nexus.mydomain.com:14000/redis')
                     shell('cd dockerapps && curl -X POST http://ec2-54-242-162-129.compute-1.amazonaws.com:8080/v2/apps --data-binary @redis.json -H "Content-type: application/json"')
@@ -98,9 +89,6 @@ jenkins {
                 description "job to build worker app"
                 scm {
                     git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
-                }
-                triggers {
-                    scm '*/5 * * * *'
                 }
                 steps {
                     shell('cd dockerapps/worker && docker build -t worker . && docker tag worker nexus.mydomain.com:14000/worker && docker push nexus.mydomain.com:14000/worker')
@@ -117,9 +105,6 @@ jenkins {
                 description "job to build docker webui app"
                 scm {
                     git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
-                }
-                triggers {
-                    scm '*/5 * * * *'
                 }
                 steps {
                     shell('cd dockerapps/webui && docker build -t webui . && docker tag webui nexus.mydomain.com:14000/webui && docker push nexus.mydomain.com:14000/webui')
@@ -162,9 +147,6 @@ jenkins {
                 scm {
                     git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
                 }
-                triggers {
-                    scm '*/5 * * * *'
-                }
                 steps {
                     shell('docker push nexus.mydomain.com:14000/rng')
                     shell('docker push nexus.mydomain.com:14000/hasher')
@@ -189,15 +171,117 @@ jenkins {
                 scm {
                     git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
                 }
-                triggers {
-                    scm '*/5 * * * *'
-                }
                 steps {
                     shell('cd dockerapps && curl -X POST http://ec2-54-242-162-129.compute-1.amazonaws.com:8080/v2/apps --data-binary @rng.json -H "Content-type: application/json"')
                     shell('cd dockerapps && curl -X POST http://ec2-54-242-162-129.compute-1.amazonaws.com:8080/v2/apps --data-binary @hasher.json -H "Content-type: application/json"')
                     shell('cd dockerapps && curl -X POST http://ec2-54-242-162-129.compute-1.amazonaws.com:8080/v2/apps --data-binary @redis.json -H "Content-type: application/json"')
                     shell('cd dockerapps && curl -X POST http://ec2-54-242-162-129.compute-1.amazonaws.com:8080/v2/apps --data-binary @worker.json -H "Content-type: application/json"')
                     shell('cd dockerapps && curl -X POST http://ec2-54-242-162-129.compute-1.amazonaws.com:8080/v2/apps --data-binary @webui.json -H "Content-type: application/json"')
+                } 
+                logRotator(7, 49) // daysToKeep, numBuildsToKeep
+            }
+        }
+
+        owncloudapp {
+            dsl {
+                setName "OWNCLOUD_APP"
+                description "job to build owncloud"
+                scm {
+                    git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
+                }
+                steps {
+                    shell('docker pull owncloud && docker tag owncloud nexus.mydomain.com:14000/owncloud && docker push nexus.mydomain.com:14000/owncloud')
+                    shell('cd dockerapps && curl -X POST http://ec2-54-242-162-129.compute-1.amazonaws.com:8080/v2/apps --data-binary @owncloud.json -H "Content-type: application/json"')
+                }
+                logRotator(7, 49) // daysToKeep, numBuildsToKeep
+            }
+        }
+
+        ownclouddb {
+            dsl {
+                setName "OWNCLOUD_DB"
+                description "job to build docker postgres"
+                scm {
+                    git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
+                }
+                steps {
+                    shell('docker pull postgresql && docker tag postgresql nexus.mydomain.com:14000/postgresql && docker push nexus.mydomain.com:14000/postgresql')
+                    shell('cd dockerapps && curl -X POST http://ec2-54-242-162-129.compute-1.amazonaws.com:8080/v2/apps --data-binary @postgresql.json -H "Content-type: application/json"')
+                }
+                logRotator(7, 49) // daysToKeep, numBuildsToKeep
+            }
+        }
+
+
+        owncloudstepbuild {
+            dsl {
+                setName "PIPELINE_OWNCLOUD_BUILD_APPS"
+                description "job to build docker apps needed for dockercoins"
+                scm {
+                    git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
+                }
+                triggers {
+                    scm '*/5 * * * *'
+                }
+                steps {
+                    shell('docker pull owncloud && docker tag owncloud nexus.mydomain.com:14000/owncloud')
+                    shell('docker pull postgresql && docker tag postgresql nexus.mydomain.com:14000/postgresql')
+                }
+                logRotator(7, 49) // daysToKeep, numBuildsToKeep
+                publishers {
+                    // use build-pipeline-plugin
+                    // https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin
+                    downstream('PIPELINE_OWNCLOUD_PUSH_APPS', 'SUCCESS')
+                }
+            }
+        }
+
+        owncloudsteppush {
+            dsl {
+                setName "PIPELINE_OWNCLOUD_PUSH_APPS"
+                description "job to push dockercoins apps"
+                scm {
+                    git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
+                }
+                steps {
+                    shell('docker push nexus.mydomain.com:14000/owncloud')
+                    shell('docker push nexus.mydomain.com:14000/postgresql')
+                } 
+
+                logRotator(7, 49) // daysToKeep, numBuildsToKeep
+                publishers {
+                    // use build-pipeline-plugin
+                    // https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin
+                    downstream('PIPELINE_OWNCLOUD_DEPLOY_APPS', 'SUCCESS')
+                }
+            }
+        }
+
+        owncloudstepdeploy {
+            dsl {
+                setName "PIPELINE_OWNCLOUD_DEPLOY_APPS"
+                description "job to build docker apps needed for owncloud"
+                scm {
+                    git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
+                }
+                steps {
+                    shell('cd dockerapps && curl -X POST http://ec2-54-242-162-129.compute-1.amazonaws.com:8080/v2/apps --data-binary @postgresql.json -H "Content-type: application/json"')
+                    shell('cd dockerapps && curl -X POST http://ec2-54-242-162-129.compute-1.amazonaws.com:8080/v2/apps --data-binary @owncloud.json -H "Content-type: application/json"')
+
+                } 
+                logRotator(7, 49) // daysToKeep, numBuildsToKeep
+            }
+        }
+
+        catnipdeploy {
+            dsl {
+                setName "CATNIP_DEPLOY"
+                description "just deploy the catnip app"
+                scm {
+                    git('https://github.com/michaelgruczel/build-you-own-paas-conference-resources')
+                }
+                steps {
+                    shell('cd dockerapps && curl -X POST http://ec2-54-242-162-129.compute-1.amazonaws.com:8080/v2/apps --data-binary @catnip.json -H "Content-type: application/json"')
                 } 
                 logRotator(7, 49) // daysToKeep, numBuildsToKeep
             }

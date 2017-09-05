@@ -1,0 +1,31 @@
+{
+  "id": "postgresql",
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "nexus.mydomain.com:14000/postgresql",
+      "network": "BRIDGE",
+      "forcePullImage": true,
+      "portMappings": [
+        { "containerPort": 5432, "hostPort": 0, "servicePort": 0, "protocol": "tcp" }
+      ],
+      "parameters": [
+        {"key": "volume-driver", "value": "rexray"},
+        {"key": "volume", "value": "pg-data:/var/lib/postgresql/data"},
+        {"key": "env", "value": "POSTGRES_PASSWORD=passw0rd123"},
+        {"key": "env", "value": "POSTGRES_USER=owncloud"},
+        {"key": "env", "value": "POSTGRES_DB=owncloud"},
+        {"key": "env", "value": "PGDATA=/var/lib/postgresql/data"}
+      ]
+    },
+    "volumes": []
+  },
+  "instances": 1,
+  "uris":  [
+    "file:///etc/docker.tar.gz"
+  ],
+  "cpus": 0.1,
+  "mem": 64,
+  "args": ["postgres"]
+
+}

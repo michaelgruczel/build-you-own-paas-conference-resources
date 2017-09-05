@@ -1,0 +1,32 @@
+{
+  "id": "catnip",
+  "labels": {
+        "HAPROXY_0_MODE": "http",
+        "HAPROXY_GROUP": "external",
+        "SERVICE_NAME": "catnip",
+        "MARATHON_HOSTNAME": "webui",
+        "HAPROXY_0_PORT": "9002",
+        "SERVICE_TAGS": "webserver",
+        "HAPROXY_0_VHOST": "catnip.testing"
+  },
+    "container": {
+        "docker": {
+            "image": "prakhar1989/catnip",
+            "network": "BRIDGE",
+            "parameters": [
+                {"key": "env", "value": "DOMAIN=mydomain.com"}
+                   ],
+            "portMappings": [{
+                "containerPort": 80,
+                "hostPort": 0,
+                "protocol": "tcp"
+            }]
+        }
+    },
+    "uris":  [
+      "file:///etc/docker.tar.gz"
+        ],
+    "cpus": 0.1,
+    "mem": 64,
+    "instances": 1
+}
