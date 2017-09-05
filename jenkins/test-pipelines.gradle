@@ -242,7 +242,7 @@ jenkins {
                 }
                 steps {
                     shell('docker push nexus.mydomain.com:14000/owncloud')
-                    shell('docker push nexus.mydomain.com:14000/postgres')
+                    shell('docker push nexus.mydomain.com:14000/postgresql')
                 } 
 
                 logRotator(7, 49) // daysToKeep, numBuildsToKeep
