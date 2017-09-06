@@ -29,19 +29,19 @@ Vagrant.configure("2") do |config|
   # within the machine from a port on the host machine and only allow access
   # via 127.0.0.1 to disable public access
   # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
-  config.vm.network "forwarded_port", guest: 8080, host: 8080, host_ip: "127.0.0.1"
-  config.vm.network "forwarded_port", guest: 5050, host: 5050, host_ip: "127.0.0.1"
-  config.vm.network "forwarded_port", guest: 2181, host: 2181, host_ip: "127.0.0.1"
-  config.vm.network "forwarded_port", guest: 2888, host: 2888, host_ip: "127.0.0.1"
-  config.vm.network "forwarded_port", guest: 3888, host: 3888, host_ip: "127.0.0.1"
+ # config.vm.network "forwarded_port", guest: 8080, host: 8080, host_ip: "127.0.0.1"
+ # config.vm.network "forwarded_port", guest: 5050, host: 5050, host_ip: "127.0.0.1"
+ # config.vm.network "forwarded_port", guest: 2181, host: 2181, host_ip: "127.0.0.1"
+ # config.vm.network "forwarded_port", guest: 2888, host: 2888, host_ip: "127.0.0.1"
+ # config.vm.network "forwarded_port", guest: 3888, host: 3888, host_ip: "127.0.0.1"
 
-  for i in 10000..11000
-    config.vm.network :forwarded_port, guest: i, host: i
-  end
+  #for i in 10000..11000
+  #  config.vm.network :forwarded_port, guest: i, host: i
+  #end
 
-  for i in 30000..35000
-    config.vm.network :forwarded_port, guest: i, host: i
-  end
+  #for i in 30000..35000
+  #  config.vm.network :forwarded_port, guest: i, host: i
+  #end
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -87,13 +87,13 @@ Vagrant.configure("2") do |config|
 
 
   config.vm.provision "shell", inline: <<-SHELL
-     apt-get update
+     sudo apt-get update -y
      echo "install terraform client" 
-     apt-get install -y unzip
+     sudo apt-get install unzip  
      cd /vagrant
-     unzip terraform_0.10.1_linux_amd64.zip
-     sudo cp terraform /usr/bin/terraform
-     rm terraform
+     wget -q https://releases.hashicorp.com/terraform/0.10.3/terraform_0.10.3_linux_amd64.zip
+     unzip terraform_0.10*
+     sudo mv terraform /usr/bin/
      echo "install ansible"
      sudo apt-get install -y software-properties-common
      sudo apt-add-repository ppa:ansible/ansible
@@ -101,11 +101,11 @@ Vagrant.configure("2") do |config|
      sudo apt-get install -y ansible
      # set password ubuntu
      echo ubuntu:ubuntu | sudo /usr/sbin/chpasswd
-     #copy key for tests
+     # copy key for tests
      cp /vagrant/silpion-test-key.pem /home/ubuntu/
      cp /vagrant/silpion-test-key.pub /home/ubuntu/
      chmod 400 /home/ubuntu/silpion-test-key.pem
      sudo chown ubuntu /home/ubuntu/silpion-test-key.pem
-     sudo chown ubuntu /home/ubuntu/silpion-test-key.pub
+     sudo chown ubuntu /home/ubuntu/silpion-test-key.pub	 
   SHELL
 end
