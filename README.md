@@ -199,19 +199,21 @@ resource "vsphere_virtual_machine" "web" {
 
 ## Ansible
 
-Let us use ansible to install docker in our local VM.
+Let us use ansible to install Docker in our local VM.
 
     $ cd ./../ansible-examples
     $ export ANSIBLE_HOST_KEY_CHECKING=False
     $ export ANSIBLE_FORCE_COLOR=true
     $ ansible-playbook -i inventory-local install-docker.yml
 
-Let us now install docker on a created VM on AWS. You have to subscripe to the centos package to use this script (executing the script wilol give you the link to the subsription).
+Let us now install Docker on a created VM on AWS. You have to subscribe to the centos package to use this script (executing the script will give you the link to the subscription).
 First change ip in inventory file (inventory-aws) accordingly to the created vm, then execute:
 
+    $ cd ./../terraform-second-example
     # set keys in example.tf
     $ terraform init
     $ terraform apply
+    $ cd ./../ansible-examples
     $ export ANSIBLE_HOST_KEY_CHECKING=False
     $ export ANSIBLE_FORCE_COLOR=true
     # set ip in inventory-aws
