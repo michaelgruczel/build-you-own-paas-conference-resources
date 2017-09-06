@@ -3,7 +3,7 @@ resources and examples as appendis to the conference talk about builing your own
 
 ## vagrant 
 
-Vagrant provides a declarative configuration file which describes all your software requirements, packages, operating system configuration, users, and more. Using a provider like virtal box you can automate creation and orchestration of vms. This is useful in order to create reproducable development environments which are as equal as possible to the production system.
+Vagrant provides a declarative configuration file which describes all your software requirements, packages, operating system configuration, users, and more. Using a provider like virtual box you can automate creation and orchestration of vms. This is useful in order to create reproducible development environments which are as equal as possible to the production system.
 
 Install vagrant and virtual box and execute:
 
@@ -11,12 +11,12 @@ Install vagrant and virtual box and execute:
     $ vagrant ssh
     $ cd /vagrant
 
-on windows you need maybe a tools like putty (user ubuntu, password vagrant, port 2222) to ssh into the vm or a unix like shell like cygwin or gitbash.
+on windows you need maybe a tool like putty (user ubuntu, password vagrant, port 2222) to ssh into the vm or a unix like shell like cygwin or gitbash.
 
 
 ## Terraform
 
-Terraform is used to create, manage, and manipulate infrastructure resources. Examples of resources include physical machines, VMs, network switches, containers, etc. Almost any infrastructure noun can be represented as a resource in Terraform.
+Terraform is used to create, manage, and manipulate infrastructure resources. Examples of resources include physical machines, VMs, network switches, containers, etc. Almost any infrastructure item can be represented as a resource in Terraform.
 
 Terraform is agnostic to the underlying platforms by supporting providers. A provider is responsible for understanding API interactions and exposing resources. Providers generally are an IaaS (e.g. AWS, GCP, Microsoft Azure, OpenStack), PaaS (e.g. Heroku), or SaaS services (e.g. Terraform Enterprise, DNSimple, CloudFlare).
 
@@ -26,7 +26,7 @@ There are 2 options to test it. You can install it or you use this vagrant box t
 
     $ terraform --version
 
-In case you want to use it from commandline on you pc and not from withing the vagrant box:
+In case you want to use it from commandline on your PC and not from withing the vagrant box:
 
 * Download archive from https://www.terraform.io/downloads.html
 * unzip it
@@ -65,7 +65,7 @@ resource "aws_eip" "ip" {
 
 </PRE>	
 
-let's create an EC2 instance on aws:
+let's create an EC2 instance on AWS:
 
     $ cd terraform-first-example
     # set keys in example.tf
