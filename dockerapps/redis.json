@@ -2,7 +2,7 @@
     "id": "redis",
     "container": {
         "docker": {
-            "image": "nexus.mydomain.com:14000/redis",
+            "image": "nexus.mydomain.com:14000/redis:3.2.10",
             "network": "BRIDGE",
             "portMappings": [{
                 "containerPort": 6379,
