@@ -255,3 +255,49 @@ more examples under:
 * https://github.com/mesosphere/docker-containers/tree/master/mesos
 * https://mesosphere.github.io/marathon/docs/application-basics.html
 
+## slides
+
+### Building your own PAAS? 
+
+![](https://raw.githubusercontent.com/michaelgruczel/build-you-own-paas-conference-resources/master/slides/Slide5.PNG "")
+
+![](https://raw.githubusercontent.com/michaelgruczel/build-you-own-paas-conference-resources/master/slides/Slide6.PNG "")
+
+![](https://raw.githubusercontent.com/michaelgruczel/build-you-own-paas-conference-resources/master/slides/Slide7.PNG "")
+
+![](https://raw.githubusercontent.com/michaelgruczel/build-you-own-paas-conference-resources/master/slides/Slide8.PNG "")
+
+![](https://raw.githubusercontent.com/michaelgruczel/build-you-own-paas-conference-resources/master/slides/Slide9.PNG "")
+
+![](https://raw.githubusercontent.com/michaelgruczel/build-you-own-paas-conference-resources/master/slides/Slide10.PNG "")
+
+![](https://raw.githubusercontent.com/michaelgruczel/build-you-own-paas-conference-resources/master/slides/Slide11.PNG "")
+
+![](https://raw.githubusercontent.com/michaelgruczel/build-you-own-paas-conference-resources/master/slides/Slide12.PNG "")
+
+
+## how ?
+
+![](https://raw.githubusercontent.com/michaelgruczel/build-you-own-paas-conference-resources/master/slides/Slide14.PNG "")
+
+![](https://raw.githubusercontent.com/michaelgruczel/build-you-own-paas-conference-resources/master/slides/Slide15.PNG "")
+
+![](https://raw.githubusercontent.com/michaelgruczel/build-you-own-paas-conference-resources/master/slides/Slide16.PNG "")
+
+![](https://raw.githubusercontent.com/michaelgruczel/build-you-own-paas-conference-resources/master/slides/Slide17.PNG "")
+
+![](https://raw.githubusercontent.com/michaelgruczel/build-you-own-paas-conference-resources/master/slides/Slide18.PNG "")
+
+![](https://raw.githubusercontent.com/michaelgruczel/build-you-own-paas-conference-resources/master/slides/Slide19.PNG "")
+
+![](https://raw.githubusercontent.com/michaelgruczel/build-you-own-paas-conference-resources/master/slides/Slide20.PNG "")
+
+![](https://raw.githubusercontent.com/michaelgruczel/build-you-own-paas-conference-resources/master/slides/Slide21.PNG "")
+
+![](https://raw.githubusercontent.com/michaelgruczel/build-you-own-paas-conference-resources/master/slides/Slide22.PNG "")
+
+![](https://raw.githubusercontent.com/michaelgruczel/build-you-own-paas-conference-resources/master/slides/Slide23.PNG "")
+
+![](https://raw.githubusercontent.com/michaelgruczel/build-you-own-paas-conference-resources/master/slides/Slide26.PNG "")
+
+
